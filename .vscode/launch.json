@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run on example data",
+      "program": "${workspaceFolder}\\src\\example.ts",
+      "args": ["5"],
+      "preLaunchTask": "npm: build",
+      "sourceMaps": true,
+      "smartStep": true,
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run on normal data",
+      "program": "${workspaceFolder}\\src\\start.ts",
+      "args": ["5"],
+      "preLaunchTask": "npm: build",
+      "sourceMaps": true,
+      "smartStep": true,
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "advent-of-code-2021",
+  "version": "1.0.0",
+  "description": "This is the repository forAoC2021",
+  "main": "index.ts",
+  "scripts": {
+    "test": "node ./out/test.js",
+    "start": "node ./out/start.js",
+    "example": "node ./out/example",
+    "init": "node ./out/init",
+    "prestart": "npm run build",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konradge/advent-of-code-2021.git"
+  },
+  "keywords": [
+    "aoc",
+    "aoc2020",
+    "advent",
+    "of",
+    "code"
+  ],
+  "author": "Konrad Geller",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/konradge/advent-of-code-2021/issues"
+  },
+  "homepage": "https://github.com/konradge/advent-of-code-2021#readme",
+  "dependencies": {
+    "@types/node": "^16.11.11",
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0"
+  }
+}
