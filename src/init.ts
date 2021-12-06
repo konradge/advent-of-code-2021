@@ -2,12 +2,19 @@ import { dayDirectory } from "./aoc/io";
 
 import axios from "axios";
 import * as fs from "fs";
-require("dotenv").config();
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "../.env" });
 
 const inputURL = (day: string | number) =>
   `https://adventofcode.com/2021/day/${day}/input`;
 
 const cookie = process.env.SESSION_COOKIE;
+console.log("***************");
+
+console.log(process.env);
+console.log(cookie);
+
+console.log(__dirname);
 
 const day = process.argv[2];
 const init = async () => {
