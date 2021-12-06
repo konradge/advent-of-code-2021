@@ -7,7 +7,7 @@ This is the repository for AoC2021, implemented in **TypeScript**
 ```
     git clone https://github.com/konradge/advent-of-code-2021.git
     npm install
-    "SESSION_COOKIE='session=<your-session-cookie>'" > .env
+    "export default '<your-session-cookie>'" > ./src/cookie.ts
 ```
 
 You can get the session-cookie by logging in to adventofcode.com, opening the browser's developer-tools > Application > Storage > Cookies > https://adventofcode.com.
