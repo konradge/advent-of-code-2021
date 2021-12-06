@@ -2,19 +2,17 @@ import { dayDirectory } from "./aoc/io";
 
 import axios from "axios";
 import * as fs from "fs";
-import * as dotenv from "dotenv";
-dotenv.config({ path: __dirname + "../.env" });
+let cookie: { default: string };
+try {
+  cookie = require("./cookie");
+} catch (err) {
+  throw new Error(
+    "No session-cookie defined. Create a file cookie.ts in src-Folder containing 'export default \"<session-cookie\"'"
+  );
+}
 
 const inputURL = (day: string | number) =>
   `https://adventofcode.com/2021/day/${day}/input`;
-
-const cookie = process.env.SESSION_COOKIE;
-console.log("***************");
-
-console.log(process.env);
-console.log(cookie);
-
-console.log(__dirname);
 
 const day = process.argv[2];
 const init = async () => {
@@ -28,7 +26,7 @@ const init = async () => {
     // Get input from AoC-Website
     const input = await axios.get(inputURL(day), {
       headers: {
-        Cookie: cookie,
+        Cookie: `session=${cookie.default}`,
       },
     });
     // Write input to file
