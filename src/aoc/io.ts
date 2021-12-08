@@ -30,6 +30,8 @@ export const prepare = () => {
   try {
     SelectedDay = require(`../days/Day${dayNumber}/index`);
   } catch (err) {
+    console.log(err);
+
     throw new Error(`Day ${dayNumber} has not been implemented yet`);
   }
 

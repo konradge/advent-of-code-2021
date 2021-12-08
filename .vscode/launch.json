@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Run on example data",
       "program": "${workspaceFolder}\\src\\example.ts",
-      "args": ["5"],
+      "args": ["8"],
       "preLaunchTask": "npm: build",
       "sourceMaps": true,
       "smartStep": true,
