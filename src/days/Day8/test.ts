@@ -1,3 +1,3 @@
-export const example = { part1: null, part2: null };
+export const example = { part1: 26, part2: 61229 };
 
-export const solution = { part1: null, part2: null };
+export const solution = { part1: 412, part2: 978171 };

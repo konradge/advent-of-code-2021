@@ -1,24 +1,31 @@
-import parse from "../../aoc/parse";
-
 const segmentNumbers = [6, 2, 5, 5, 4, 5, 6, 3, 7, 6];
+
+let outputValues: string[][];
+let signalPatterns: string[][];
 
 export const init = (input: string) => {
   // Initialization
-  parse(input);
+  outputValues = input
+    .split("\n")
+    .map((line) => line.split(" | ")[1].split(" "));
+  signalPatterns = input
+    .split("\n")
+    .map((line) => line.split(" | ")[0].split(" "));
 };
 
 export const part1 = (input: string) => {
-  // Part 1
-  return input
-    .replace(/\s\|\s/g, "|")
-    .split("\n")
-    .map((line: string) => line.split("|")[1])
-    .map((line) => line.split(" ").filter((val) => isUnique(val)).length)
-    .reduce((acc, line) => acc + line, 0);
+  // Part 1: Count the signals, that have a length of 2, 3, 4 or 7
+  return outputValues
+    .flatMap((x) => x)
+    .reduce((acc, signal) => acc + Number(isUnique(signal)), 0);
 };
 
-const isUnique = (val: string) =>
-  val.length === 2 || val.length === 4 || val.length === 3 || val.length === 7;
+// Tests wether a signal must be a specific number (1, 7, 4, 8)
+const isUnique = (signal: string) =>
+  signal.length === 2 ||
+  signal.length === 4 ||
+  signal.length === 3 ||
+  signal.length === 7;
 
 const getNumbers = (wires: string[], map) => {
   const x = Object.keys(numberToSegments).findIndex(
@@ -57,88 +64,78 @@ Object.keys(numberToSegments).forEach(
     ])
 );
 
-const equalArray = (a: any[], b: any[]) => a.every((val, i) => val === b[i]);
-
 export const part2 = (input: string) => {
-  const outputs = input.split("\n").map((l) => l.split(" | ")[1]);
+  // Iterate over the different pattern-sequences (line by line)
+  return signalPatterns.reduce((acc, signalSequence, lineIndex) => {
+    // Maps the segments of the display to the mixed wires
+    const segmentsToWires: { [key: string]: string[] } = {};
 
-  let res = 0;
-  input
-    .replace(/\s\|\s/g, "|")
-    .replace(/ /g, ",")
-    .split("\n")
-    .map((line) => line.split("|")[0])
-    .forEach((line, i) => {
-      // Reset mapping for each line
-      const map: { [key: string]: string[] } = {};
-      // Build map
-      allLetters.forEach((letter) => (map[letter] = [...allLetters]));
+    allLetters.forEach((letter) => (segmentsToWires[letter] = [...allLetters]));
 
-      line
-        .split(/[|,]/)
-        .filter((a) => isUnique(a) || a.length === 5)
-        .sort((a, b) => (isUnique(a) ? -1 : 1))
-        .forEach((signal) => {
-          // Iterate over the signals from this line
-          findMappings(signal, map);
-        });
+    // Handle unique signals
+    signalSequence
+      .filter((s) => isUnique(s))
+      .forEach((signal) => {
+        const usedSegments =
+          numberToSegments[
+            Object.keys(numberToSegments).find(
+              (num) => numberToSegments[num].length === signal.length
+            )
+          ];
 
-      const mixedWireToActualWire = {};
-      Object.keys(map).forEach(
-        (key) => (mixedWireToActualWire[map[key][0]] = key)
+        updateMap(segmentsToWires, usedSegments, signal);
+      });
+
+    // Handle ununique signals
+    const ununiqueSignals = signalSequence.filter((s) => !isUnique(s));
+
+    // Find 3:
+    const three = ununiqueSignals
+      .filter((signal) => signal.length === 5)
+      .find(
+        (signal) =>
+          signal.includes(segmentsToWires["c"][0]) &&
+          signal.includes(segmentsToWires["c"][1])
       );
+    updateMap(segmentsToWires, numberToSegments["3"], three);
 
-      outputs[i]
-        .split(" ")
+    // Find 2:
+    const two = ununiqueSignals
+      .filter((signal) => signal.length === 5 && signal !== three)
+      .find((signal) => signal.includes(segmentsToWires["e"][0]));
+
+    updateMap(segmentsToWires, numberToSegments["2"], two);
+
+    const outputSignals = outputValues[lineIndex].map((signal) =>
+      signal.split("").map((wire) => findKeyByValue(segmentsToWires, wire))
+    );
+
+    const outputNumbers = outputSignals.map((signal) =>
+      Object.keys(numberToSegments).find(
+        (key) =>
+          numberToSegments[key].sort().join(",") === signal.sort().join(",")
+      )
+    );
+
+    // Accumulate
+    return (
+      acc +
+      outputNumbers
         .reverse()
-        .map((o, index) => {
-          const x =
-            Math.pow(10, index) *
-            getNumbers(o.split(""), mixedWireToActualWire);
-          res += x;
-        });
-    });
-
-  // Part 2
-  return res;
+        .reduce((a, n, i) => a + Number(n) * Math.pow(10, i), 0)
+    );
+  }, 0);
 };
 
-const findMappings = (signal: string, map: { [key: string]: string[] }) => {
-  // Get range of possibly displayed numbers
-  let displayedNumbers = Object.keys(numberToSegments).filter(
-    (num) => numberToSegments[num].length === signal.length
+const updateMap = (map, usedSegments, signal) => {
+  // Remove other wires than the current ones from the possible segments
+  usedSegments.forEach(
+    (wire) => (map[wire] = intersect(map[wire], signal.split("")))
   );
 
-  displayedNumbers = displayedNumbers.filter((num) => {
-    let matchable = true;
-    const requiredWires = numberToSegments[num].sort();
-    // The number of places
-    let wiresOnNumber = requiredWires.map((w) => map[w]);
-    signal.split("").forEach((wire) => {
-      const posOfWire = wiresOnNumber.findIndex((wires) =>
-        wires.includes(wire)
-      );
-      if (posOfWire === -1) {
-        matchable = false;
-        return;
-      } else wiresOnNumber = wiresOnNumber.filter((_, i) => i !== posOfWire);
-    });
-    return matchable;
-  });
-
-  // Get all segments that are needed, to display one of those numbers
-  const requiredSegments = displayedNumbers.flatMap(
-    (dispNum) => numberToSegments[dispNum]
-  );
-
-  requiredSegments.forEach(
-    (wire) => (map[wire] = intersect(signal.split(""), map[wire]))
-  );
-  const unrequiredSegments = complement(requiredSegments);
-  // Remove the letters, that are needed for this unique number, from all other segments
-  unrequiredSegments.forEach(
-    (wire) =>
-      (map[wire] = map[wire].filter((w) => !signal.split("").includes(w)))
+  // Remove all wires, that are needed for the current number, from all other segments
+  complement(usedSegments).forEach(
+    (wire) => (map[wire] = intersect(map[wire], complement(signal.split(""))))
   );
 };
 
@@ -150,6 +147,10 @@ const intersect = (arr1: any[], arr2: any[]) => {
 };
 
 const unique = (arr: any[]) => arr.filter((v, i, a) => a.indexOf(v) === i);
+
+const findKeyByValue = (map: { [key: string]: any[] }, value: any) => {
+  return Object.keys(map).find((key) => map[key][0] === value);
+};
 
 export const cleanup = () => {
   // Cleanup
