@@ -1,5 +1,3 @@
-const segmentNumbers = [6, 2, 5, 5, 4, 5, 6, 3, 7, 6];
-
 let outputValues: string[][];
 let signalPatterns: string[][];
 
@@ -13,7 +11,7 @@ export const init = (input: string) => {
     .map((line) => line.split(" | ")[0].split(" "));
 };
 
-export const part1 = (input: string) => {
+export const part1 = (_: string) => {
   // Part 1: Count the signals, that have a length of 2, 3, 4 or 7
   return outputValues
     .flatMap((x) => x)
@@ -26,17 +24,6 @@ const isUnique = (signal: string) =>
   signal.length === 4 ||
   signal.length === 3 ||
   signal.length === 7;
-
-const getNumbers = (wires: string[], map) => {
-  const x = Object.keys(numberToSegments).findIndex(
-    (num) =>
-      wires
-        .map((w) => map[w][0])
-        .sort()
-        .join("") === numberToSegments[num].sort().join("")
-  );
-  return x;
-};
 
 const allLetters = ["a", "b", "c", "d", "e", "f", "g"];
 const numberToSegments: { [key: string]: string[] } = {
