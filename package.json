@@ -29,8 +29,10 @@
   },
   "homepage": "https://github.com/konradge/advent-of-code-2021#readme",
   "dependencies": {
+    "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.11",
     "axios": "^0.24.0",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "lodash": "^4.17.21"
   }
 }
